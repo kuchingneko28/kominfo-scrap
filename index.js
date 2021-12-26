@@ -10,13 +10,6 @@ const beritaPemerintah = "https://www.kominfo.go.id/content/all/berita";
 const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 
 // variable kosong untuk di push nanti
-let artikel = [];
-let data = {
-  thumbnail: "",
-  date: "",
-  title: "",
-  description: "",
-};
 
 //info
 app.get("/", (req, res) => {
@@ -26,8 +19,15 @@ app.get("/", (req, res) => {
 app.get("/berita-kominfo", async (req, res) => {
   const response = await scrap(beritaKominfo);
   const $ = cheerio.load(response);
+  let artikel = [];
 
   $(".content").each((index, element) => {
+    let data = {
+      thumbnail: "",
+      date: "",
+      title: "",
+      description: "",
+    };
     $(".data-column").each((index, element) => {
       data.date = $(element).children(".date").text();
     });
@@ -47,7 +47,16 @@ app.get("/berita-pemerintah", async (req, res) => {
   const response = await scrap(beritaPemerintah);
   const $ = cheerio.load(response);
 
+  let artikel = [];
+
   $(".content").each((index, element) => {
+    let data = {
+      thumbnail: "",
+      date: "",
+      title: "",
+      description: "",
+    };
+
     $(".data-column").each((index, element) => {
       data.date = $(element).children(".date").text();
     });
@@ -66,8 +75,16 @@ app.get("/berita-pemerintah", async (req, res) => {
 app.get("/berita-hoax", async (req, res) => {
   const response = await scrap(beritaHoax);
   const $ = cheerio.load(response);
+  let artikel = [];
 
   $(".content").each((index, element) => {
+    let data = {
+      thumbnail: "",
+      date: "",
+      title: "",
+      description: "",
+    };
+
     $(".data-column").each((index, element) => {
       data.date = $(element).children(".date").text();
     });
