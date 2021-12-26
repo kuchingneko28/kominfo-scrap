@@ -1,7 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { url } = require("inspector");
+
 const app = express();
 const port = 3000;
 
@@ -32,7 +32,7 @@ app.get("/", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`App listening at port ${port}`);
+  console.log(`Server running at port ${port}`);
 });
 
 // async function scrap() {
