@@ -3,7 +3,7 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
 app.get("/", async (req, res) => {
   const url = "https://www.kominfo.go.id/content/all/berita_satker";
