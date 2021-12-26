@@ -74,7 +74,6 @@ app.get("/berita-hoax", async (req, res) => {
 
     data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
     data.title = $(element).children(".title").text();
-    data.description = $(element).children(".description").text();
 
     artikel.push(data);
   });
