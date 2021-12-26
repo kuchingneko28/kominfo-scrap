@@ -9,8 +9,6 @@ const beritaKominfo = "https://www.kominfo.go.id/content/all/berita_satker";
 const beritaPemerintah = "https://www.kominfo.go.id/content/all/berita";
 const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 
-// variable kosong untuk di push nanti
-
 //info
 app.get("/", (req, res) => {
   res.send("untuk akses : http://url/parameter");
