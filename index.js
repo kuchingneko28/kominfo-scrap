@@ -1,27 +1,33 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { send } = require("express/lib/response");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get("/", async (req, res) => {
+app.get("/", (req, res) => {
+  res.send("Untuk mengakses api : http:///url/api");
+});
+app.get("/api", async (req, res) => {
   const url = "https://www.kominfo.go.id/content/all/berita_satker";
   const { data } = await axios.get(url);
 
   const $ = cheerio.load(data);
   let artikel = [];
-  $(".blog-entry .content").each((index, element) => {
+  $(".content").each((index, element) => {
     let data = {
       thumbnail: "",
-      //   date: "",
+      date: "",
       title: "",
       description: "",
     };
 
-    //console.log($(element).children(".title").text());
+    $(".data-column").each((index, element) => {
+      data.date = $(element).children(".date").text();
+    });
+
     data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    // data.date = $(element).children(".date h2").text();
     data.title = $(element).children(".title").text();
     data.description = $(element).children(".description").text();
 
@@ -32,38 +38,5 @@ app.get("/", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running at port ${port}`);
+  console.log(`Server running at port ${port}.`);
 });
-
-// async function scrap() {
-//   try {
-//     const url = "https://www.kominfo.go.id/content/all/berita_satker";
-//     const { data } = await axios.get(url);
-
-//     const $ = cheerio.load(data);
-//     let artikel = [];
-//     $(".blog-entry .content").each((index, element) => {
-//       let data = {
-//         thumbnail: "",
-//         title: "",
-//         description: "",
-//       };
-
-//       //console.log($(element).children(".title").text());
-//       data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-//       data.title = $(element).children(".title").text();
-//       data.description = $(element).children(".description").text();
-
-//       console.log(data);
-//       artikel.push(data);
-//     });
-
-//     console.log(artikel);
-
-//     return artikel;
-//   } catch (err) {
-//     if (err) {
-//       return "API ERROR";
-//     }
-//   }
-// }
