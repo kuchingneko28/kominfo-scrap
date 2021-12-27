@@ -15,85 +15,23 @@ app.get("/", (req, res) => {
 });
 
 app.get("/berita-kominfo", async (req, res) => {
-  const response = await scrap(beritaKominfo);
-  const $ = cheerio.load(response);
-  let artikel = [];
+  const kominfo = await scrap(beritaKominfo);
 
-  $(".content").each((index, element) => {
-    let data = {
-      thumbnail: "",
-      date: "",
-      title: "",
-      description: "",
-    };
-    $(".data-column").each((index, element) => {
-      data.date = $(element).children(".date").text();
-    });
-
-    data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    data.title = $(element).children(".title").text();
-    data.description = $(element).children(".description").text();
-
-    artikel.push(data);
-  });
-
-  res.send(artikel);
+  res.send(kominfo);
 });
 
 // bagian berita
 app.get("/berita-pemerintah", async (req, res) => {
-  const response = await scrap(beritaPemerintah);
-  const $ = cheerio.load(response);
+  const pemerintah = await scrap(beritaPemerintah);
 
-  let artikel = [];
-
-  $(".content").each((index, element) => {
-    let data = {
-      thumbnail: "",
-      date: "",
-      title: "",
-      description: "",
-    };
-
-    $(".data-column").each((index, element) => {
-      data.date = $(element).children(".date").text();
-    });
-
-    data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    data.title = $(element).children(".title").text();
-    data.description = $(element).children(".description").text();
-
-    artikel.push(data);
-  });
-
-  res.send(artikel);
+  res.send(pemerintah);
 });
 
 // bagian hoax
 app.get("/berita-hoax", async (req, res) => {
-  const response = await scrap(beritaHoax);
-  const $ = cheerio.load(response);
-  let artikel = [];
+  const hoax = await scrap(beritaHoax);
 
-  $(".content").each((index, element) => {
-    let data = {
-      thumbnail: "",
-      date: "",
-      title: "",
-      description: "",
-    };
-
-    $(".data-column").each((index, element) => {
-      data.date = $(element).children(".date").text();
-    });
-
-    data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    data.title = $(element).children(".title").text();
-
-    artikel.push(data);
-  });
-
-  res.send(artikel);
+  res.send(hoax);
 });
 
 // check jika server running
@@ -104,6 +42,28 @@ app.listen(port, () => {
 // bagian function
 async function scrap(url) {
   const { data } = await axios.get(url);
+  const $ = cheerio.load(data);
 
-  return data;
+  let artikel = [];
+
+  $(".content").each((index, element) => {
+    let data = {
+      thumbnail: "",
+      date: "",
+      title: "",
+      description: "",
+    };
+
+    $(".data-column").each((index, element) => {
+      data.date = $(element).children(".date").text();
+    });
+
+    data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+    data.title = $(element).children(".title").text();
+    data.description = $(element).children(".description").text();
+
+    artikel.push(data);
+  });
+
+  return artikel;
 }
