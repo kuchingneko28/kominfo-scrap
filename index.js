@@ -9,18 +9,19 @@ const beritaKominfo = "https://www.kominfo.go.id/content/all/berita_satker";
 const beritaPemerintah = "https://www.kominfo.go.id/content/all/berita";
 const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 
-//info
+// info
 app.get("/", (req, res) => {
   res.send("untuk akses : http://url/parameter");
 });
 
+// bagian berita kominfo
 app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
 
   res.send(kominfo);
 });
 
-// bagian berita
+// bagian berita pemerintah
 app.get("/berita-pemerintah", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
 
@@ -58,12 +59,15 @@ async function scrap(url) {
       data.date = $(element).children(".date").text();
     });
 
+    // mencari tag & value
     data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
     data.title = $(element).children(".title").text();
     data.description = $(element).children(".description").text();
 
+    // push data artikel  ke array
     artikel.push(data);
   });
 
+  // return array
   return artikel;
 }
