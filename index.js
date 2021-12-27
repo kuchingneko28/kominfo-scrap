@@ -11,7 +11,13 @@ const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 
 // info
 app.get("/", (req, res) => {
-  res.send("untuk akses : http://url/parameter");
+  const list = [
+    {
+      status: "200",
+      parameter: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
+    },
+  ];
+  res.send(list);
 });
 
 // bagian berita kominfo
