@@ -43,7 +43,7 @@ app.listen(port, () => {
 // bagian function
 async function scrap(url) {
   const { data } = await axios.get(url);
-  const $ = cheerio.load(data);
+  const $ = await cheerio.load(data);
 
   let artikel = [];
 
