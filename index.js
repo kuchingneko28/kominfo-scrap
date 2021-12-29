@@ -72,7 +72,7 @@ async function scrap(url) {
         const catagory = $(element).children(".author").children("b").text();
         const description = $(element).children(".description").text();
 
-        artikel.push({ thumbnail, title, label: label[index], catagory, description });
+        artikel.push({ label: label[index],thumbnail, title, catagory, description });
       });
     // push data artikel  ke array
   });
