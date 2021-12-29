@@ -22,8 +22,8 @@ app.get("/", (req, res) => {
 });
 app.get("/article", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
-  const kominfo = await scrap(beritaPemerintah);
-  const hoax = await scrap(beritaPemerintah);
+  const kominfo = await scrap(beritaKominfo);
+  const hoax = await scrap(beritaHoax);
   const param = req.query.name;
 
   for (let i = 0; i < 4; i++) {
