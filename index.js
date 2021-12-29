@@ -59,7 +59,7 @@ async function scrap(url) {
       .find(".data-column")
       .each((index, element) => {
         const date = $(element).children(".date").text();
-        const view = $(element).children(".data-entry").text();
+        const views = $(element).children(".data-entry").text();
         label.push({ date, views });
       });
 
