@@ -58,6 +58,7 @@ async function scrap(url) {
       thumbnail: "",
       date: "",
       views: "",
+      catagory: "",
       title: "",
       description: "",
     };
@@ -70,6 +71,7 @@ async function scrap(url) {
     // mencari tag & value
     data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
     data.title = $(element).children(".title").text();
+    data.catagory = $(element).children(".author").children("b").text();
     data.description = $(element).children(".description").text();
 
     // push data artikel  ke array
