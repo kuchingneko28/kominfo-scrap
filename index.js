@@ -23,25 +23,47 @@ app.get("/", (req, res) => {
 // bagian berita kominfo
 app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
-  const article = await getArticle(kominfo);
+  const param = req.query.name;
 
-  res.send({ menu: kominfo, post: article });
+  for (let i = 0; i < kominfo.length; i++) {
+    if (param == kominfo[i]["url"]) {
+      const article = await getArticle(param);
+
+      return res.send(article);
+    }
+  }
+  res.send(kominfo);
+  // const kominfo = await scrap(beritaKominfo);
 });
 
 // bagian berita pemerintah
 app.get("/berita-pemerintah", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
-  const article = await getArticle(pemerintah);
+  const param = req.query.name;
 
-  res.send({ menu: pemerintah, post: article });
+  for (let i = 0; i < pemerintah.length; i++) {
+    if (param == pemerintah[i]["url"]) {
+      const article = await getArticle(param);
+
+      return res.send(article);
+    }
+  }
+  res.send(pemerintah);
 });
 
 // bagian hoax
 app.get("/berita-hoax", async (req, res) => {
   const hoax = await scrap(beritaHoax);
-  const article = await getArticle(hoax);
+  const param = req.query.name;
 
-  res.send({ menu: hoax, post: article });
+  for (let i = 0; i < hoax.length; i++) {
+    if (param == hoax[i]["url"]) {
+      const article = await getArticle(param);
+
+      return res.send(article);
+    }
+  }
+  res.send(hoax);
 });
 
 // check jika server running
@@ -84,33 +106,25 @@ async function scrap(url) {
   return article;
 }
 
-async function getArticle(url) {
+async function getArticle(param) {
+  const newsURL = "https://www.kominfo.go.id" + param;
+
+  const { data } = await axios.get(newsURL);
+
+  const $ = cheerio.load(data);
   let article = [];
-  let grabUrl = [];
-  for (let i = 0; i < url.length; i++) {
-    const newsURL = "https://www.kominfo.go.id" + url[i]["url"];
 
-    const { data } = await axios.get(newsURL);
+  $(".blog-entry").each((index, element) => {
+    $(element)
+      .find(".content")
+      .each((index, element) => {
+        const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+        const title = $(element).children(".title").text();
+        const parag = $(element).children(".typography-block").text();
+        const catagory = $(element).children(".author").children("b").text();
 
-    grabUrl.push(data);
-  }
-
-  const all = await axios.all(grabUrl);
-
-  for (let i = 0; i < grabUrl.length; i++) {
-    const $ = cheerio.load(grabUrl[i]);
-    $(".blog-entry").each((index, element) => {
-      $(element)
-        .find(".content")
-        .each((index, element) => {
-          const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-          const title = $(element).children(".title").text();
-          const parag = $(element).children(".typography-block").text();
-          const catagory = $(element).children(".author").children("b").text();
-
-          article.push({ thumbnail, title, catagory, parag });
-        });
-    });
-  }
+        article.push({ thumbnail, title, catagory, parag });
+      });
+  });
   return article;
 }
