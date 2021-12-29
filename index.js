@@ -57,12 +57,14 @@ async function scrap(url) {
     let data = {
       thumbnail: "",
       date: "",
+      views: "",
       title: "",
       description: "",
     };
 
     $(".data-column").each((index, element) => {
       data.date = $(element).children(".date").text();
+      data.views = $(element).children(".data-entry").text();
     });
 
     // mencari tag & value
