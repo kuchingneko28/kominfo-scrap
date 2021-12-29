@@ -60,7 +60,7 @@ async function scrap(url) {
       .each((index, element) => {
         const date = $(element).children(".date").text();
         const view = $(element).children(".data-entry").text();
-        label.push({ date, view });
+        label.push({ date, views });
       });
 
     // // mencari tag & value
