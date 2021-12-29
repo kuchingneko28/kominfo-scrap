@@ -14,26 +14,11 @@ const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 app.get("/", (req, res) => {
   const list = [
     {
-      status: "200",
+      status: res.status,
       parameter: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
     },
   ];
   res.send(list);
-});
-app.get("/article", async (req, res) => {
-  const pemerintah = await scrap(beritaPemerintah);
-  const kominfo = await scrap(beritaKominfo);
-  const hoax = await scrap(beritaHoax);
-  const param = req.query.name;
-
-  for (let i = 0; i < 4; i++) {
-    if (param == pemerintah[i]["url"] || param == kominfo[i]["url"] || param == hoax[i]["url"]) {
-      const article = await getArticle(param);
-      return res.send(article);
-    } else {
-      return res.send({ info: "masukan link artikel di parameter" });
-    }
-  }
 });
 
 // bagian berita kominfo
@@ -41,7 +26,6 @@ app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
 
   res.send(kominfo);
-  // const kominfo = await scrap(beritaKominfo);
 });
 
 // bagian berita pemerintah
@@ -95,28 +79,5 @@ async function scrap(url) {
     // push data article  ke array
   });
   // return array
-  return article;
-}
-
-async function getArticle(param) {
-  const newsURL = "https://www.kominfo.go.id" + param;
-
-  const { data } = await axios.get(newsURL);
-
-  const $ = cheerio.load(data);
-  let article = [];
-
-  $(".blog-entry").each((index, element) => {
-    $(element)
-      .find(".content")
-      .each((index, element) => {
-        const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-        const title = $(element).children(".title").text();
-        const parag = $(element).children(".typography-block").text();
-        const catagory = $(element).children(".author").children("b").text();
-
-        article.push({ thumbnail, title, catagory, parag });
-      });
-  });
   return article;
 }
