@@ -25,7 +25,7 @@ app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
   const article = await getArticle(kominfo);
 
-  res.send({ listForMenu: kominfo, listForPost: article });
+  res.send({ menu: kominfo, post: article });
 });
 
 // bagian berita pemerintah
@@ -33,7 +33,7 @@ app.get("/berita-pemerintah", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
   const article = await getArticle(pemerintah);
 
-  res.send({ listForMenu: pemerintah, listForPost: article });
+  res.send({ menu: pemerintah, post: article });
 });
 
 // bagian hoax
@@ -41,7 +41,7 @@ app.get("/berita-hoax", async (req, res) => {
   const hoax = await scrap(beritaHoax);
   const article = await getArticle(hoax);
 
-  res.send({ listForMenu: hoax, listForPost: article });
+  res.send({ menu: hoax, post: article });
 });
 
 // check jika server running
@@ -108,7 +108,7 @@ async function getArticle(url) {
           const parag = $(element).children(".typography-block").text();
           const catagory = $(element).children(".author").children("b").text();
 
-          article.push({ thumbnail, title, parag, catagory });
+          article.push({ thumbnail, title, catagory, parag });
         });
     });
   }
