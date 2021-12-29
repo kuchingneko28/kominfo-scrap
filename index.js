@@ -52,32 +52,30 @@ async function scrap(url) {
   const $ = cheerio.load(data);
 
   let artikel = [];
+  let label = [];
 
-  $(".content").each((index, element) => {
-    let data = {
-      thumbnail: "",
-      date: "",
-      views: "",
-      catagory: "",
-      title: "",
-      description: "",
-    };
+  $(".blog-entry").each((index, element) => {
+    $(element)
+      .find(".data-column")
+      .each((index, element) => {
+        const date = $(element).children(".date").text();
+        const view = $(element).children(".data-entry").text();
+        label.push({ date, view });
+      });
 
-    $(".data-column").each((index, element) => {
-      data.date = $(element).children(".date").text();
-      data.views = $(element).children(".data-entry").text();
-    });
+    // // mencari tag & value
+    $(element)
+      .find(".content")
+      .each((index, element) => {
+        const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+        const title = $(element).children(".title").text();
+        const catagory = $(element).children(".author").children("b").text();
+        const description = $(element).children(".description").text();
 
-    // mencari tag & value
-    data.thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    data.title = $(element).children(".title").text();
-    data.catagory = $(element).children(".author").children("b").text();
-    data.description = $(element).children(".description").text();
-
+        artikel.push({ thumbnail, title, label: label[index], catagory, description });
+      });
     // push data artikel  ke array
-    artikel.push(data);
   });
-
   // return array
   return artikel;
 }
