@@ -23,22 +23,25 @@ app.get("/", (req, res) => {
 // bagian berita kominfo
 app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
+  const article = await getArticle(kominfo);
 
-  res.send(kominfo);
+  res.send({ listForMenu: kominfo, listForPost: article });
 });
 
 // bagian berita pemerintah
 app.get("/berita-pemerintah", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
+  const article = await getArticle(pemerintah);
 
-  res.send(pemerintah);
+  res.send({ listForMenu: pemerintah, listForPost: article });
 });
 
 // bagian hoax
 app.get("/berita-hoax", async (req, res) => {
   const hoax = await scrap(beritaHoax);
+  const article = await getArticle(hoax);
 
-  res.send(hoax);
+  res.send({ listForMenu: hoax, listForPost: article });
 });
 
 // check jika server running
@@ -51,7 +54,7 @@ async function scrap(url) {
   const { data } = await axios.get(url);
   const $ = cheerio.load(data);
 
-  let artikel = [];
+  let article = [];
   let label = [];
 
   $(".blog-entry").each((index, element) => {
@@ -69,13 +72,45 @@ async function scrap(url) {
       .each((index, element) => {
         const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
         const title = $(element).children(".title").text();
+        const url = $(element).children(".title").attr("href");
         const catagory = $(element).children(".author").children("b").text();
         const description = $(element).children(".description").text();
 
-        artikel.push({ label: label[index],thumbnail, title, catagory, description });
+        article.push({ label: label[index], thumbnail, title, url, catagory, description });
       });
-    // push data artikel  ke array
+    // push data article  ke array
   });
   // return array
-  return artikel;
+  return article;
+}
+
+async function getArticle(url) {
+  let article = [];
+  let grabUrl = [];
+  for (let i = 0; i < url.length; i++) {
+    const newsURL = "https://www.kominfo.go.id" + url[i]["url"];
+
+    const { data } = await axios.get(newsURL);
+
+    grabUrl.push(data);
+  }
+
+  const all = await axios.all(grabUrl);
+
+  for (let i = 0; i < grabUrl.length; i++) {
+    const $ = cheerio.load(grabUrl[i]);
+    $(".blog-entry").each((index, element) => {
+      $(element)
+        .find(".content")
+        .each((index, element) => {
+          const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+          const title = $(element).children(".title").text();
+          const parag = $(element).children(".typography-block").text();
+          const catagory = $(element).children(".author").children("b").text();
+
+          article.push({ thumbnail, title, parag, catagory });
+        });
+    });
+  }
+  return article;
 }
