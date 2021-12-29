@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { status } = require("express/lib/response");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -19,19 +20,26 @@ app.get("/", (req, res) => {
   ];
   res.send(list);
 });
+app.get("/article", async (req, res) => {
+  const pemerintah = await scrap(beritaPemerintah);
+  const kominfo = await scrap(beritaPemerintah);
+  const hoax = await scrap(beritaPemerintah);
+  const param = req.query.name;
+
+  for (let i = 0; i < 4; i++) {
+    if (param == pemerintah[i]["url"] || param == kominfo[i]["url"] || param == hoax[i]["url"]) {
+      const article = await getArticle(param);
+      return res.send(article);
+    } else {
+      return res.send({ info: "masukan link artikel di parameter" });
+    }
+  }
+});
 
 // bagian berita kominfo
 app.get("/berita-kominfo", async (req, res) => {
   const kominfo = await scrap(beritaKominfo);
-  const param = req.query.name;
 
-  for (let i = 0; i < kominfo.length; i++) {
-    if (param == kominfo[i]["url"]) {
-      const article = await getArticle(param);
-
-      return res.send(article);
-    }
-  }
   res.send(kominfo);
   // const kominfo = await scrap(beritaKominfo);
 });
@@ -39,30 +47,14 @@ app.get("/berita-kominfo", async (req, res) => {
 // bagian berita pemerintah
 app.get("/berita-pemerintah", async (req, res) => {
   const pemerintah = await scrap(beritaPemerintah);
-  const param = req.query.name;
 
-  for (let i = 0; i < pemerintah.length; i++) {
-    if (param == pemerintah[i]["url"]) {
-      const article = await getArticle(param);
-
-      return res.send(article);
-    }
-  }
   res.send(pemerintah);
 });
 
 // bagian hoax
 app.get("/berita-hoax", async (req, res) => {
   const hoax = await scrap(beritaHoax);
-  const param = req.query.name;
 
-  for (let i = 0; i < hoax.length; i++) {
-    if (param == hoax[i]["url"]) {
-      const article = await getArticle(param);
-
-      return res.send(article);
-    }
-  }
   res.send(hoax);
 });
 
