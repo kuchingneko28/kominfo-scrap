@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
+const { status } = require("express/lib/response");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -13,17 +14,22 @@ const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 app.get("/", (req, res) => {
   const list = [
     {
-      status: "200",
+      status: res.statusCode,
       parameter: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
+      article: ["/get-article"],
     },
   ];
   res.send(list);
 });
 app.get("/get-article", async (req, res) => {
   const param = req.query;
-  const run = await validation(param);
 
-  res.send(run);
+  if (param["url"]) {
+    const run = await validation(param);
+    res.send(run);
+  } else {
+    res.send({ info: "masukan link article ke parameter menggunakan query ?url=, untuk link article ada didalam parameter berita" });
+  }
 });
 
 // bagian berita kominfo
