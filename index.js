@@ -15,12 +15,14 @@ app.get("/", (req, res) => {
   const list = [
     {
       status: res.statusCode,
-      parameter: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
-      article: ["/get-article"],
+      berita: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
+      artikel: ["/get-article"],
     },
   ];
   res.send(list);
 });
+
+// Bagian artikel
 app.get("/get-article", async (req, res) => {
   const param = req.query;
 
@@ -28,7 +30,7 @@ app.get("/get-article", async (req, res) => {
     const run = await validation(param);
     res.send(run);
   } else {
-    res.send({ info: "masukan link article ke parameter menggunakan query ?url=, untuk link article ada didalam parameter berita" });
+    res.send({ info: "masukan link article ke parameter menggunakan query ?url=, untuk link artikel ada didalam parameter berita" });
   }
 });
 
