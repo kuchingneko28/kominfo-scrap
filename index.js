@@ -1,7 +1,6 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { status } = require("express/lib/response");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -14,11 +13,17 @@ const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
 app.get("/", (req, res) => {
   const list = [
     {
-      status: res.status,
+      status: "200",
       parameter: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
     },
   ];
   res.send(list);
+});
+app.get("/get-article", async (req, res) => {
+  const param = req.query;
+  const run = await validation(param);
+
+  res.send(run);
 });
 
 // bagian berita kominfo
@@ -80,4 +85,39 @@ async function scrap(url) {
   });
   // return array
   return article;
+}
+
+async function scrapArticle(url) {
+  const newUrl = "http://kominfo.go.id" + url;
+  const { data } = await axios.get(newUrl);
+  const $ = cheerio.load(data);
+
+  let article = [];
+  $(".content").each((index, element) => {
+    // // mencari tag & value
+
+    const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+    const title = $(element).children(".title").text();
+    const paragraph = $(element).children(".typography-block").text();
+    const catagory = $(element).children(".author").children("b").text();
+
+    article.push({ thumbnail, title, catagory, paragraph });
+    // push data article  ke array
+  });
+  // return array
+  return article;
+}
+
+async function validation(param) {
+  const kominfo = await scrap(beritaKominfo);
+  const pemerintah = await scrap(beritaPemerintah);
+  const hoax = await scrap(beritaHoax);
+  for (let i = 0; i < kominfo.length; i++) {
+    if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"]) {
+      const get = await scrapArticle(param["url"]);
+      return get;
+    } else {
+      console.log("Not found 404");
+    }
+  }
 }
