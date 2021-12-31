@@ -108,7 +108,7 @@ async function scrapArticle(url) {
   const paragraph = $(".content").find(".typography-block").text();
   const catagory = $(".content").find(".author").children("b").text();
 
-  return [{ title, date, views, thumbnail, catagory, paragraph }];
+  return { title, date, views, thumbnail, catagory, paragraph };
 }
 
 async function validation(param) {
