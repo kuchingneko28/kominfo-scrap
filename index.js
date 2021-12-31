@@ -98,30 +98,17 @@ async function scrap(url) {
 async function scrapArticle(url) {
   const newUrl = "http://kominfo.go.id" + url;
   const { data } = await axios.get(newUrl);
+
   const $ = cheerio.load(data);
 
-  let article = [];
-  let label = [];
+  const date = $(".data-column").find(".date").text();
+  const views = $(".data-column").find(".data-entry").text();
+  const thumbnail = $(".content").find(".thumbnail-entry").children(".thumbnail-img").attr("src");
+  const title = $(".content").find(".title").text();
+  const paragraph = $(".content").find(".typography-block").text();
+  const catagory = $(".content").find(".author").children("b").text();
 
-  $(".data-column").each((index, element) => {
-    const date = $(element).children(".date").text();
-    const views = $(element).children(".data-entry").text();
-    label.push({ date, views });
-  });
-
-  $(".content").each((index, element) => {
-    // // mencari tag & value
-
-    const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-    const title = $(element).children(".title").text();
-    const paragraph = $(element).children(".typography-block").text();
-    const catagory = $(element).children(".author").children("b").text();
-
-    article.push({ label: label[index], thumbnail, title, catagory, paragraph });
-    // push data article  ke array
-  });
-  // return array
-  return article;
+  return { title, date, views, thumbnail, catagory, paragraph };
 }
 
 async function validation(param) {
