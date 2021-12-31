@@ -101,6 +101,14 @@ async function scrapArticle(url) {
   const $ = cheerio.load(data);
 
   let article = [];
+  let label = [];
+
+  $(".data-column").each((index, element) => {
+    const date = $(element).children(".date").text();
+    const views = $(element).children(".data-entry").text();
+    label.push({ date, views });
+  });
+
   $(".content").each((index, element) => {
     // // mencari tag & value
 
@@ -109,7 +117,7 @@ async function scrapArticle(url) {
     const paragraph = $(element).children(".typography-block").text();
     const catagory = $(element).children(".author").children("b").text();
 
-    article.push({ thumbnail, title, catagory, paragraph });
+    article.push({ label: label[index], thumbnail, title, catagory, paragraph });
     // push data article  ke array
   });
   // return array
