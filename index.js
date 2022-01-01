@@ -1,7 +1,6 @@
 const express = require("express");
 const axios = require("axios");
 const cheerio = require("cheerio");
-const { status } = require("express/lib/response");
 const app = express();
 const port = process.env.PORT || 3000;
 
@@ -9,13 +8,14 @@ const port = process.env.PORT || 3000;
 const beritaKominfo = "https://www.kominfo.go.id/content/all/berita_satker";
 const beritaPemerintah = "https://www.kominfo.go.id/content/all/berita";
 const beritaHoax = "https://www.kominfo.go.id/content/all/laporan_isu_hoaks";
+const siaranPers = "https://www.kominfo.go.id/content/all/siaran_pers";
 
 // info
 app.get("/", (req, res) => {
   const list = [
     {
       status: res.statusCode,
-      berita: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax"],
+      berita: ["/berita-kominfo", "/berita-pemerintah", "/berita-hoax", "/siaran-pers"],
       artikel: ["/get-article"],
     },
   ];
@@ -53,6 +53,12 @@ app.get("/berita-hoax", async (req, res) => {
   const hoax = await scrap(beritaHoax);
 
   res.send(hoax);
+});
+// bagian berita pemerintah
+app.get("/siaran-pers", async (req, res) => {
+  const siaran = await scrap(siaranPers);
+
+  res.send(siaran);
 });
 
 // check jika server running
