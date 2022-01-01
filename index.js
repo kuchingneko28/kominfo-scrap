@@ -121,8 +121,9 @@ async function validation(param) {
   const kominfo = await scrap(beritaKominfo);
   const pemerintah = await scrap(beritaPemerintah);
   const hoax = await scrap(beritaHoax);
+  const siaran = await scrap(siaranPers);
   for (let i = 0; i < kominfo.length; i++) {
-    if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"]) {
+    if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"] || param["url"] === siaran[i]["url"]) {
       const get = await scrapArticle(param["url"]);
       return get;
     } else {
