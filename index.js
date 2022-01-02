@@ -75,6 +75,7 @@ async function scrap(url) {
   let label = [];
 
   $(".blog-entry").each((index, element) => {
+    // // mencari tag & value
     $(element)
       .find(".data-column")
       .each((index, element) => {
@@ -83,8 +84,8 @@ async function scrap(url) {
         label.push({ date, views });
       });
 
-    // // mencari tag & value
     $(element)
+      // // mencari tag & value
       .find(".content")
       .each((index, element) => {
         const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
@@ -93,9 +94,9 @@ async function scrap(url) {
         const catagory = $(element).children(".author").children("b").text();
         const description = $(element).children(".description").text();
 
+        // push data ke array
         article.push({ label: label[index], thumbnail, title, url, catagory, description });
       });
-    // push data article  ke array
   });
   // return array
   return article;
@@ -104,7 +105,6 @@ async function scrap(url) {
 async function scrapArticle(url) {
   const newUrl = "http://kominfo.go.id" + url;
   const { data } = await axios.get(newUrl);
-
   const $ = cheerio.load(data);
 
   const date = $(".data-column").find(".date").text();
@@ -114,6 +114,7 @@ async function scrapArticle(url) {
   const paragraph = $(".content").find(".typography-block").text();
   const catagory = $(".content").find(".author").children("b").text();
 
+  // return article
   return [{ title, date, views, thumbnail, catagory, paragraph }];
 }
 
@@ -122,6 +123,7 @@ async function validation(param) {
   const pemerintah = await scrap(beritaPemerintah);
   const hoax = await scrap(beritaHoax);
   const siaran = await scrap(siaranPers);
+
   for (let i = 0; i < kominfo.length; i++) {
     if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"] || param["url"] === siaran[i]["url"]) {
       const get = await scrapArticle(param["url"]);
