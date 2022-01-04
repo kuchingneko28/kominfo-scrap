@@ -1,7 +1,6 @@
 {
   "name": "stress",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -17,5 +16,15 @@
   },
   "engines": {
     "node": "^16.13.1"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kuchingneko28/kominfo-scrap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kuchingneko28/kominfo-scrap/issues"
+  },
+  "homepage": "https://github.com/kuchingneko28/kominfo-scrap#readme",
+  "description": ""
 }
