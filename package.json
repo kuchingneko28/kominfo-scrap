@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,7 +17,9 @@
   "engines": {
     "node": "^16.13.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kuchingneko28/kominfo-scrap.git"

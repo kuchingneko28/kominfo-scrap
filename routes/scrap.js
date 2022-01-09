@@ -50,53 +50,60 @@ router.get("/siaran-pers", async (req, res) => {
 
 // bagian function
 async function scrap(url) {
-  const { data } = await axios.get(url);
-  const $ = cheerio.load(data);
+  const { data, status } = await axios.get(url);
+  if (status == 200) {
+    const $ = cheerio.load(data);
 
-  let article = [];
-  let label = [];
+    let article = [];
+    let label = [];
 
-  $(".blog-entry").each((index, element) => {
-    $(element)
-      .find(".data-column")
-      .each((index, element) => {
-        const date = $(element).children(".date").text();
-        const views = $(element).children(".data-entry").text();
-        label.push({ date, views });
-      });
+    $(".blog-entry").each((index, element) => {
+      $(element)
+        .find(".data-column")
+        .each((index, element) => {
+          const date = $(element).children(".date").text();
+          const views = $(element).children(".data-entry").text();
+          label.push({ date, views });
+        });
 
-    // // mencari tag & value
-    $(element)
-      .find(".content")
-      .each((index, element) => {
-        const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
-        const title = $(element).children(".title").text();
-        const url = $(element).children(".title").attr("href");
-        const catagory = $(element).children(".author").children("b").text();
-        const description = $(element).children(".description").text();
+      // // mencari tag & value
+      $(element)
+        .find(".content")
+        .each((index, element) => {
+          const thumbnail = $(element).children(".thumbnail-entry").children(".thumbnail-img").attr("src");
+          const title = $(element).children(".title").text();
+          const url = $(element).children(".title").attr("href");
+          const catagory = $(element).children(".author").children("b").text();
+          const description = $(element).children(".description").text();
 
-        article.push({ label: label[index], thumbnail, title, url, catagory, description });
-      });
-    // push data article  ke array
-  });
-  // return array
-  return article;
+          article.push({ label: label[index], thumbnail, title, url, catagory, description });
+        });
+      // push data article  ke array
+    });
+    // return array
+    return article;
+  } else {
+    console.log("Failed to access..!");
+  }
 }
 
 async function scrapArticle(url) {
   const newUrl = "http://kominfo.go.id" + url;
-  const { data } = await axios.get(newUrl);
+  const { data, status } = await axios.get(newUrl);
+  if (status == 200) {
+    const $ = cheerio.load(data);
 
-  const $ = cheerio.load(data);
+    const date = $(".data-column").find(".date").text();
+    const views = $(".data-column").find(".data-entry").text();
+    const thumbnail = $(".content").find(".thumbnail-entry").children(".thumbnail-img").attr("src");
+    const title = $(".content").find(".title").text();
+    const paragraph = $(".content").find(".typography-block").text();
+    const catagory = $(".content").find(".author").children("b").text();
 
-  const date = $(".data-column").find(".date").text();
-  const views = $(".data-column").find(".data-entry").text();
-  const thumbnail = $(".content").find(".thumbnail-entry").children(".thumbnail-img").attr("src");
-  const title = $(".content").find(".title").text();
-  const paragraph = $(".content").find(".typography-block").text();
-  const catagory = $(".content").find(".author").children("b").text();
-
-  return [{ title, date, views, thumbnail, catagory, paragraph }];
+    return [{ title, date, views, thumbnail, catagory, paragraph }];
+  } else {
+    console.log("Failed to access..!");
+  }
 }
 
 async function validation(param) {
@@ -109,7 +116,7 @@ async function validation(param) {
       const get = await scrapArticle(param["url"]);
       return get;
     } else {
-      console.log("Not found 404");
+      console.log("Invalid request..");
     }
   }
 }
