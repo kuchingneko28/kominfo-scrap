@@ -50,8 +50,8 @@ router.get("/siaran-pers", async (req, res) => {
 
 // bagian function
 async function scrap(url) {
-  const { data, status } = await axios.get(url);
-  if (status == 200) {
+  try {
+    const { data } = await axios.get(url);
     const $ = cheerio.load(data);
 
     let article = [];
@@ -82,15 +82,15 @@ async function scrap(url) {
     });
     // return array
     return article;
-  } else {
-    console.log("Failed to access..!");
+  } catch (err) {
+    return err;
   }
 }
 
 async function scrapArticle(url) {
-  const newUrl = "http://kominfo.go.id" + url;
-  const { data, status } = await axios.get(newUrl);
-  if (status == 200) {
+  try {
+    const newUrl = "http://kominfo.go.id" + url;
+    const { data } = await axios.get(newUrl);
     const $ = cheerio.load(data);
 
     const date = $(".data-column").find(".date").text();
@@ -101,23 +101,25 @@ async function scrapArticle(url) {
     const catagory = $(".content").find(".author").children("b").text();
 
     return [{ title, date, views, thumbnail, catagory, paragraph }];
-  } else {
-    console.log("Failed to access..!");
+  } catch (err) {
+    return err;
   }
 }
 
 async function validation(param) {
-  const kominfo = await scrap(beritaKominfo);
-  const pemerintah = await scrap(beritaPemerintah);
-  const hoax = await scrap(beritaHoax);
-  const siaran = await scrap(siaranPers);
-  for (let i = 0; i < kominfo.length; i++) {
-    if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"] || param["url"] === siaran[i]["url"]) {
-      const get = await scrapArticle(param["url"]);
-      return get;
-    } else {
-      console.log("Invalid request..");
+  try {
+    const kominfo = await scrap(beritaKominfo);
+    const pemerintah = await scrap(beritaPemerintah);
+    const hoax = await scrap(beritaHoax);
+    const siaran = await scrap(siaranPers);
+    for (let i = 0; i < kominfo.length; i++) {
+      if (param["url"] === kominfo[i]["url"] || param["url"] === pemerintah[i]["url"] || param["url"] === hoax[i]["url"] || param["url"] === siaran[i]["url"]) {
+        const get = await scrapArticle(param["url"]);
+        return get;
+      }
     }
+  } catch (err) {
+    return err;
   }
 }
 
